@@ -1,0 +1,129 @@
+import java.util.*;
+public class helloworld {
+	public static void main(String arg[])
+	{
+	    
+	}
+}
+
+class Student
+{
+    String name;
+    String num;
+    String id;
+    String major;
+    String Class;
+    String homeadd;
+    String home;
+    String grade;
+    Student()
+    {
+    	
+    }
+    Student(String name,String num,String id,String major,String Class,String homeadd,String home,String grade)
+    {
+    	this.name=name;this.num=num;this.id=id;this.major=major;this.Class=Class;this.homeadd=homeadd;this.home=home;this.grade=grade;
+    }
+    public String GetGrade()
+    {
+    	return grade;
+    }
+    public String Getid()
+    {
+    	return id;
+    }
+    public String GetName()
+    {
+    	return name;
+    }
+    public void ChangeId(String id)
+    {
+    	this.id=id;
+    }
+    public void ChangeGrade(String grade)
+    {
+    	this.grade=grade;
+    }
+}
+
+class StudentFunction
+{
+	List<Student> student;
+	StudentFunction()
+	{
+		
+	}
+	StudentFunction(List<Student> student)
+	{
+		this.student=student;
+	}
+	public void ShowGradeRank()
+	{
+		
+	}
+	public void ShowGradeLayout()
+	{
+		
+	}
+	public void Delet()
+	{
+		student.clear();
+	}
+	public void DeletId(String id)
+	{
+		for(int i=0;i<student.size();i++)
+		{
+			if(student.get(i).id==id)
+			{
+				student.remove(i);
+				i--;
+			}
+		}
+	}
+	public void DeletName(String name)
+	{
+		for(int i=0;i<student.size();i++)
+		{
+			if(student.get(i).name==name)
+			{
+				student.remove(i);
+				i--;
+			}
+		}
+	}
+	public Student IdGetStudentInfo(String id)
+	{
+		Student a=new Student();
+		for(int i=0;i<student.size();i++)
+		{
+			if(student.get(i).id==id) 
+			{
+				a=student.get(i);
+			}
+		}
+		return a;
+	}
+	public void StudentNameChange(int i,String name)
+	{
+		student.get(i).name=name;
+	}
+	public void StudentIdChange(int i,String id)
+	{
+		student.get(i).id=id;
+	}
+	public void StudentGradeChange(int i,String grade)
+	{
+		student.get(i).grade=grade;
+	}
+	public void StudentAdd()
+	{
+		System.out.println("请输入学生信息");
+		Scanner s=new Scanner(System.in);
+		Student a=new Student();
+		System.out.println("学号");
+		a.id=s.nextLine();
+		System.out.println("姓名");
+		a.name=s.nextLine();
+	}
+}
+
