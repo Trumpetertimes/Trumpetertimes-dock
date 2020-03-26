@@ -1,0 +1,117 @@
+public class ConsumerAndProducersimulation {	
+	private final String LOCK="lock";
+	private final int max=10;
+	int full=0;
+    int mutex=0;
+    int count=0;
+    int copycount=1;
+class User extends Thread
+{
+		int i;
+		User(int i)
+		{
+			this.i=i;
+		}
+	@Override
+	public void run()
+	 {
+		user();
+	 }
+	public void user() 
+		{
+		while(true) 
+		{
+		 synchronized(LOCK)
+		 {
+			try {	
+				if(mutex==1)
+				LOCK.wait();
+				if(count==200)
+					break;
+				mutex++;
+				count++;
+				mutex--;
+				LOCK.notify();
+				}
+			catch(Exception e)
+				{
+						e.printStackTrace();
+				}
+		
+			while(full==max)
+			
+			{
+				try 
+				{
+				LOCK.wait();
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+			try {
+		    Thread.sleep(100);
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+			System.out.println("用户"+i+"登录"+count);
+			full++;
+			LOCK.notify();
+		}
+	    }
+		}
+}
+	class Copy extends Thread
+	{
+		@Override
+		public void run()
+		{
+		      copy();	
+		}
+		
+		public void	copy()
+		{
+			while(true) {
+				if(copycount==201)
+				{
+					break;
+				}
+		synchronized(LOCK) {
+			while(full==0)
+			{
+				try
+				{
+					LOCK.wait();
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+			System.out.println("已备份"+copycount);
+			full--;
+			copycount++;
+			LOCK.notify();
+		}
+		}
+		}
+	}
+
+	public static void main(String arg[])
+	{
+		ConsumerAndProducersimulation ConsumerAndProducersimulation=new ConsumerAndProducersimulation();
+	    User u1=ConsumerAndProducersimulation.new User(1);
+	    User u2=ConsumerAndProducersimulation.new User(2);
+	    User u3=ConsumerAndProducersimulation.new User(3);
+	    User u4=ConsumerAndProducersimulation.new User(4);
+	    Copy c=ConsumerAndProducersimulation.new Copy();
+		u1.start();
+		u2.start();
+		u3.start();
+		u4.start();
+		c.start();
+	}
+}
