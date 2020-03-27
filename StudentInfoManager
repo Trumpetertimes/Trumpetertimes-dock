@@ -1,15 +1,67 @@
+package org.shixun.demo;
 import java.util.*;
+import java.io.*;
 public class helloworld {
 	public static void main(String arg[])
 	{
-	    
+		System.out.println("###################");
+	    System.out.println("欢迎进入学生管理系统！");
+	    List<Student> list=new ArrayList<Student>();
+	    StudentFunction studentfunction=new StudentFunction();
+	    FileFunction filefunction=new FileFunction();
+	    Scanner s=new Scanner(System.in);
+	    String juge=" ";
+	    System.out.println("--------------------");
+	    try 
+	    {
+	    	if(filefunction.FileRead().isEmpty()==true)
+	    	{
+	    		System.out.println("学生信息为空!");
+	    		list=studentfunction.StudentAdd();
+	    	}
+	    }
+	    catch(IOException e)
+	    {
+	    	e.printStackTrace();
+	    }
+	    System.out.println("功能可输入：\n添加学生信息\n"+"删除所有学生信息\n通过学号删除此学生信息\n通过学生名删除此学生信息\n退出系统");
+	    while(true)
+	    {
+	    	juge=s.nextLine();
+	    	if(juge=="添加学生信息")
+	    	{
+	    	try 
+	    	{
+	    		if((list=filefunction.FileRead())==null)
+	    		{
+	    	    	list=studentfunction.StudentAdd();
+	    		}
+	    	
+	    	}
+	    	catch(IOException e)
+	    	{
+	    		e.printStackTrace();
+	      	}
+	    	}
+	    	if(juge=="删除所有学生信息")
+	    	{
+	    		list=studentfunction.DeletAll(list);
+	    		System.out.println("所有学生信息已删除！");
+	    	}
+	    	if(juge=="退出系统")
+	    	{
+	    		s.close();
+	    		break;
+	    	}
+	    	System.out.println("--------------------");
+		    System.out.println("功能：\n添加学生信息\n"+"删除所有学生信息\n通过学号删除此学生信息\n通过学生名删除此学生信息\n");
+	    }
 	}
 }
 
 class Student
 {
     String name;
-    String num;
     String id;
     String major;
     String Class;
@@ -20,9 +72,9 @@ class Student
     {
     	
     }
-    Student(String name,String num,String id,String major,String Class,String homeadd,String home,String grade)
+    Student(String name,String id,String major,String Class,String homeadd,String home,String grade)
     {
-    	this.name=name;this.num=num;this.id=id;this.major=major;this.Class=Class;this.homeadd=homeadd;this.home=home;this.grade=grade;
+    	this.name=name;this.id=id;this.major=major;this.Class=Class;this.homeadd=homeadd;this.home=home;this.grade=grade;
     }
     public String GetGrade()
     {
@@ -65,11 +117,12 @@ class StudentFunction
 	{
 		
 	}
-	public void Delet()
+	public List<Student> DeletAll(List<Student> list)
 	{
-		student.clear();
+		list.clear();
+		return list;
 	}
-	public void DeletId(String id)
+	public void DeletById(String id)
 	{
 		for(int i=0;i<student.size();i++)
 		{
@@ -80,7 +133,7 @@ class StudentFunction
 			}
 		}
 	}
-	public void DeletName(String name)
+	public void DeletByName(String name)
 	{
 		for(int i=0;i<student.size();i++)
 		{
@@ -103,19 +156,39 @@ class StudentFunction
 		}
 		return a;
 	}
-	public void StudentNameChange(int i,String name)
+	public void StudentNameChange(String name,String newname)
 	{
-		student.get(i).name=name;
+		for(int i=0;i<student.size();i++)
+		{
+			if(student.get(i).name==name)
+			{
+				student.get(i).name=newname;
+			}
+		}
+		
 	}
-	public void StudentIdChange(int i,String id)
+	public void StudentIdChange(String id,String newid)
 	{
-		student.get(i).id=id;
+		for(int i=0;i<student.size();i++)
+		{
+			if(student.get(i).id==id)
+			{
+			     student.get(i).id=newid;
+			}
+		}
 	}
-	public void StudentGradeChange(int i,String grade)
+	public void StudentGradeChange(String grade,String newgrade)
 	{
-		student.get(i).grade=grade;
+		for(int i=0;i<student.size();i++)
+		{
+			if(student.get(i).grade==grade)
+			{
+				student.get(i).grade=newgrade;
+			}
+		}
+		
 	}
-	public void StudentAdd()
+	public List<Student> StudentAdd()
 	{
 		System.out.println("请输入学生信息");
 		Scanner s=new Scanner(System.in);
@@ -124,6 +197,68 @@ class StudentFunction
 		a.id=s.nextLine();
 		System.out.println("姓名");
 		a.name=s.nextLine();
+		System.out.println("班级");
+		a.Class=s.nextLine();
+		System.out.println("住址");
+		a.homeadd=s.nextLine();
+		System.out.println("籍贯");
+		a.home=s.nextLine();
+		System.out.println("成绩");
+		a.grade=s.nextLine();
+		System.out.println("专业");
+		a.major=s.nextLine();
+		student.add(a);
+		s.close();
+		return student;
 	}
+	
 }
 
+class FileFunction
+{
+	public void FileWrite(List <Student> student) throws IOException
+	{
+		File file=new File("D:\\student.txt");
+	    FileWriter fw=new FileWriter(file);
+	    BufferedWriter bw=new BufferedWriter(fw);
+	    for(int i=0;i<student.size();i++)
+	    {
+	    		bw.write(student.get(i).id+",");
+	    		bw.write(student.get(i).name+",");
+	    		bw.write(student.get(i).Class+",");
+	    		bw.write(student.get(i).homeadd+",");
+	    		bw.write(student.get(i).home+",");
+	    		bw.write(student.get(i).grade+",");
+	    		bw.write(student.get(i).major+",");
+	    		bw.write("\n");
+	    }
+	    bw.close();
+	    fw.close();
+	}
+	public List<Student> FileRead() throws IOException
+	{
+		List<Student> list=new ArrayList<Student>();
+		Student student=new Student();
+		File file=new File("D:\\student.txt");
+		FileReader fr=new FileReader(file);
+		BufferedReader br=new BufferedReader(fr);
+		String tempall;
+		String temp[];
+		
+		while((tempall=br.readLine())!=null)
+		{
+			temp=tempall.split(",");
+			student.id=temp[0];
+			student.name=temp[1];
+			student.Class=temp[2];
+			student.homeadd=temp[3];
+			student.home=temp[4];
+			student.grade=temp[5];
+			student.major=temp[6];
+			list.add(student);
+		}
+		br.close();
+		fr.close();
+		return list;
+	}
+}
