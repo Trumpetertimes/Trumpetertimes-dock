@@ -293,13 +293,15 @@ class FileFunction
 	public List<Student> FileRead(File file) throws IOException
 	{
 		List<Student> list=new ArrayList<Student>();
-		Student student=new Student();
-		FileReader fr=new FileReader(file);
-		BufferedReader br=new BufferedReader(fr);
+		FileInputStream fips=new FileInputStream(file);
+		InputStreamReader ipsr=new InputStreamReader(fips);
+		BufferedReader br=new BufferedReader(ipsr);
 		String tempall;
 		String temp[];
+		int i=0;
 		while((tempall=br.readLine())!=null)
 		{
+			Student student=new Student();
 			temp=tempall.split(",");
 			student.id=temp[0];
 			student.name=temp[1];
@@ -308,10 +310,11 @@ class FileFunction
 			student.home=temp[4];
 			student.grade=temp[5];
 			student.major=temp[6];
-			list.add(student);
+			list.add(i,student);
+			i++;
 		}
 		br.close();
-		fr.close();
+		ipsr.close();
 		return list;
 	}
 }
