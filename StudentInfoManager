@@ -6,6 +6,18 @@ public class helloworld {
 	{
 		System.out.println("###################");
 	    System.out.println("欢迎进入学生管理系统！");
+	    File file=new File("D:\\student.txt");
+	    if(!file.exists())
+	    {
+	    	try 
+	    	{
+	    	file.createNewFile();
+	    	}
+	    	catch(Exception e)
+	    	{
+	    		e.printStackTrace();
+	    	}
+	    }
 	    List<Student> list=new ArrayList<Student>();
 	    StudentFunction studentfunction=new StudentFunction();
 	    FileFunction filefunction=new FileFunction();
@@ -14,47 +26,85 @@ public class helloworld {
 	    System.out.println("--------------------");
 	    try 
 	    {
-	    	if(filefunction.FileRead().isEmpty()==true)
+	    	if(filefunction.FileRead(file).isEmpty()==true)
 	    	{
 	    		System.out.println("学生信息为空!");
-	    		list=studentfunction.StudentAdd();
+	    		list=studentfunction.StudentAdd(list);
+	    	}
+	    	else
+	    	{
+	    		list=filefunction.FileRead(file);
 	    	}
 	    }
 	    catch(IOException e)
 	    {
 	    	e.printStackTrace();
 	    }
-	    System.out.println("功能可输入：\n添加学生信息\n"+"删除所有学生信息\n通过学号删除此学生信息\n通过学生名删除此学生信息\n退出系统");
+	    System.out.println("功能可输入：\n添加学生信息\n"+"显示当前所有学生信息\n"+"删除所有学生信息\n通过学号删除此学生信息\n通过学生名删除此学生信息\n退出系统");
 	    while(true)
 	    {
 	    	juge=s.nextLine();
-	    	if(juge=="添加学生信息")
+	    	if(juge.equals("添加学生信息"))
 	    	{
 	    	try 
 	    	{
-	    		if((list=filefunction.FileRead())==null)
-	    		{
-	    	    	list=studentfunction.StudentAdd();
-	    		}
-	    	
+	    	    list=studentfunction.StudentAdd(list);	
 	    	}
-	    	catch(IOException e)
+	    	catch(Exception e)
 	    	{
 	    		e.printStackTrace();
 	      	}
 	    	}
-	    	if(juge=="删除所有学生信息")
+	    	if(juge.equals("显示当前所有学生信息"))
+	    	{
+	    		try 
+	    		{	
+	    		    for(int i=0;i<list.size();i++)
+	    		    {
+	    		    	System.out.print(list.get(i).id+"   ");
+	    		    	System.out.print(list.get(i).name+"   ");
+	    		    	System.out.print(list.get(i).Class+"   ");
+	    		    	System.out.print(list.get(i).homeadd+"   ");
+	    		    	System.out.print(list.get(i).home+"   ");
+	    		    	System.out.print(list.get(i).grade+"   ");
+	    		    	System.out.print(list.get(i).major+"\n");
+	    		    }
+	    		}
+	    		catch(Exception e)
+	    		{
+	    			e.printStackTrace();
+	    		}
+	    	}
+	    	
+	    	if(juge.equals("删除所有学生信息"))
 	    	{
 	    		list=studentfunction.DeletAll(list);
+	    		file.delete();
 	    		System.out.println("所有学生信息已删除！");
 	    	}
-	    	if(juge=="退出系统")
+	    	
+	    	if(juge.equals("通过学号删除此学生信息"))
+	    	{
+	    		System.out.println("输入要删除学生的学号");
+	    		String id=s.nextLine();
+	    		list=studentfunction.DeletById(id, list);
+	    		System.out.println("操作成功！");
+	    	}
+	    	
+	    	if(juge.equals("退出系统"))
 	    	{
 	    		s.close();
+	    		try {
+	    		filefunction.FileWrite(file, list);
+	    		}
+	    		catch(IOException e)
+	    		{
+	    			e.printStackTrace();
+	    		}
 	    		break;
 	    	}
 	    	System.out.println("--------------------");
-		    System.out.println("功能：\n添加学生信息\n"+"删除所有学生信息\n通过学号删除此学生信息\n通过学生名删除此学生信息\n");
+		    System.out.println("##功能：\n#添加学生信息\n"+"#显示当前所有学生信息\n"+"#删除所有学生信息\n#通过学号删除此学生信息\n#通过学生名删除此学生信息\n");
 	    }
 	}
 }
@@ -100,14 +150,14 @@ class Student
 
 class StudentFunction
 {
-	List<Student> student;
+	
 	StudentFunction()
 	{
 		
 	}
 	StudentFunction(List<Student> student)
 	{
-		this.student=student;
+		
 	}
 	public void ShowGradeRank()
 	{
@@ -122,18 +172,25 @@ class StudentFunction
 		list.clear();
 		return list;
 	}
-	public void DeletById(String id)
+	public List<Student> DeletById(String id2,List <Student> student)
 	{
+		int flag=0;
 		for(int i=0;i<student.size();i++)
 		{
-			if(student.get(i).id==id)
+			if(student.get(i).id.equals(id2))
 			{
 				student.remove(i);
 				i--;
+				flag++;
 			}
 		}
+		if(flag==0)
+		{
+			System.out.println("未找到此学号的学生");
+		}
+		return student;
 	}
-	public void DeletByName(String name)
+	public void DeletByName(String name,List <Student> student)
 	{
 		for(int i=0;i<student.size();i++)
 		{
@@ -144,7 +201,7 @@ class StudentFunction
 			}
 		}
 	}
-	public Student IdGetStudentInfo(String id)
+	public Student IdGetStudentInfo(String id,List <Student> student)
 	{
 		Student a=new Student();
 		for(int i=0;i<student.size();i++)
@@ -156,7 +213,7 @@ class StudentFunction
 		}
 		return a;
 	}
-	public void StudentNameChange(String name,String newname)
+	public void StudentNameChange(String name,String newname,List<Student> student)
 	{
 		for(int i=0;i<student.size();i++)
 		{
@@ -167,7 +224,7 @@ class StudentFunction
 		}
 		
 	}
-	public void StudentIdChange(String id,String newid)
+	public void StudentIdChange(String id,String newid,List<Student> student)
 	{
 		for(int i=0;i<student.size();i++)
 		{
@@ -177,7 +234,7 @@ class StudentFunction
 			}
 		}
 	}
-	public void StudentGradeChange(String grade,String newgrade)
+	public void StudentGradeChange(String grade,String newgrade,List<Student> student)
 	{
 		for(int i=0;i<student.size();i++)
 		{
@@ -188,7 +245,7 @@ class StudentFunction
 		}
 		
 	}
-	public List<Student> StudentAdd()
+	public List<Student> StudentAdd(List <Student> list)
 	{
 		System.out.println("请输入学生信息");
 		Scanner s=new Scanner(System.in);
@@ -197,7 +254,7 @@ class StudentFunction
 		a.id=s.nextLine();
 		System.out.println("姓名");
 		a.name=s.nextLine();
-		System.out.println("班级");
+		System.out.println("班  级");
 		a.Class=s.nextLine();
 		System.out.println("住址");
 		a.homeadd=s.nextLine();
@@ -207,18 +264,16 @@ class StudentFunction
 		a.grade=s.nextLine();
 		System.out.println("专业");
 		a.major=s.nextLine();
-		student.add(a);
-		s.close();
-		return student;
+		list.add(a);
+		return list;
 	}
 	
 }
 
 class FileFunction
 {
-	public void FileWrite(List <Student> student) throws IOException
+	public void FileWrite(File file,List <Student> student) throws IOException
 	{
-		File file=new File("D:\\student.txt");
 	    FileWriter fw=new FileWriter(file);
 	    BufferedWriter bw=new BufferedWriter(fw);
 	    for(int i=0;i<student.size();i++)
@@ -229,22 +284,20 @@ class FileFunction
 	    		bw.write(student.get(i).homeadd+",");
 	    		bw.write(student.get(i).home+",");
 	    		bw.write(student.get(i).grade+",");
-	    		bw.write(student.get(i).major+",");
+	    		bw.write(student.get(i).major);
 	    		bw.write("\n");
 	    }
 	    bw.close();
 	    fw.close();
 	}
-	public List<Student> FileRead() throws IOException
+	public List<Student> FileRead(File file) throws IOException
 	{
 		List<Student> list=new ArrayList<Student>();
 		Student student=new Student();
-		File file=new File("D:\\student.txt");
 		FileReader fr=new FileReader(file);
 		BufferedReader br=new BufferedReader(fr);
 		String tempall;
 		String temp[];
-		
 		while((tempall=br.readLine())!=null)
 		{
 			temp=tempall.split(",");
