@@ -40,7 +40,7 @@ public class helloworld {
 	    {
 	    	e.printStackTrace();
 	    }
-	    System.out.println("功能可输入：\n添加学生信息\n"+"按学号查询学生信息\n"+"显示当前所有学生信息\n"+"删除所有学生信息\n通过学号删除此学生信息\n通过学生名删除此学生信息\n退出系统");
+	    System.out.println("功能可输入：\n添加学生信息\n"+"按学号查询学生信息\n"+"显示当前所有学生信息\n"+"按学号修改学生全部信息\n删除所有学生信息\n通过学号删除此学生信息\n通过学生名删除此学生信息\n退出系统");
 	    while(true)
 	    {
 	    	juge=s.nextLine();
@@ -99,6 +99,13 @@ public class helloworld {
 	    			System.out.println("系统中没有此学生信息！");
 	    		}
 	    	}
+	    	
+	    	if(juge.equals("按学号修改学生全部信息"))
+	    	{
+                String id=s.nextLine();
+	    		list=studentfunction.StudentAllinfoChange(id, list);
+	    		
+	    	}
 	    	if(juge.equals("退出系统"))
 	    	{
 	    		s.close();
@@ -112,7 +119,7 @@ public class helloworld {
 	    		break;
 	    	}
 	    	System.out.println("--------------------");
-		    System.out.println("##功能：\n#添加学生信息\n"+"按学号查询学生信息\n"+"#显示当前所有学生信息\n"+"#删除所有学生信息\n#通过学号删除此学生信息\n#通过学生名删除此学生信息\n");
+		    System.out.println("##功能：\n#添加学生信息\n"+"按学号查询学生信息\n"+"#显示当前所有学生信息\n"+"#按学号修改学生全部信息\n#删除所有学生信息\n#通过学号删除此学生信息\n#通过学生名删除此学生信息\n");
 	    }
 	}
 }
@@ -252,7 +259,7 @@ class StudentFunction
 		}
 		return a;
 	}
-	public void StudentNameChange(String name,String newname,List<Student> student)
+	public List<Student> StudentNameChange(String name,String newname,List<Student> student)
 	{
 		for(int i=0;i<student.size();i++)
 		{
@@ -261,13 +268,13 @@ class StudentFunction
 				student.get(i).name=newname;
 			}
 		}
-		
+		return student;
 	}
 	public void StudentIdChange(String id,String newid,List<Student> student)
 	{
 		for(int i=0;i<student.size();i++)
 		{
-			if(student.get(i).id.equals(id))
+			if(student.get(i).id==id)
 			{
 			     student.get(i).id=newid;
 			}
@@ -277,12 +284,54 @@ class StudentFunction
 	{
 		for(int i=0;i<student.size();i++)
 		{
-			if(student.get(i).grade.equals(grade))
+			if(student.get(i).grade==grade)
 			{
 				student.get(i).grade=newgrade;
 			}
 		}
 		
+	}
+	public List<Student> StudentAllinfoChange(String id,List<Student> list)
+	{
+		Scanner s=new Scanner(System.in);
+		int flag=0;
+		for(int i=0;i<list.size();i++)
+		{
+			if(list.get(i).id.equals(id))
+			{
+				flag++;
+				System.out.println("输入新学号");
+				list.get(i).id=s.nextLine();
+				System.out.println("输入新姓名");
+				list.get(i).name=s.nextLine();
+				System.out.println("输入新班级");
+				list.get(i).Class=s.nextLine();
+				System.out.println("输入新住址");
+				list.get(i).homeadd=s.nextLine();
+				System.out.println("输入新籍贯");
+				list.get(i).home=s.nextLine();
+				System.out.println("输入新成绩");
+				list.get(i).grade=s.nextLine();
+				System.out.println("输入新专业");
+				list.get(i).major=s.nextLine();
+			}
+		}
+		if(flag==0)
+		{
+			try
+			{
+				throw new IdNotFoundException();
+			}
+			catch(IdNotFoundException e)
+			{
+				e.PrintInfo();
+			}
+		}
+		else
+		{
+			System.out.println("修改成功");
+		}
+		return list;
 	}
 	public List<Student> StudentAdd(List <Student> list)
 	{
