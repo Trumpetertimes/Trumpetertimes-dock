@@ -40,7 +40,7 @@ public class helloworld {
 	    {
 	    	e.printStackTrace();
 	    }
-	    System.out.println("功能可输入：\n添加学生信息\n"+"显示当前所有学生信息\n"+"删除所有学生信息\n通过学号删除此学生信息\n通过学生名删除此学生信息\n退出系统");
+	    System.out.println("功能可输入：\n添加学生信息\n"+"按学号查询学生信息\n"+"显示当前所有学生信息\n"+"删除所有学生信息\n通过学号删除此学生信息\n通过学生名删除此学生信息\n退出系统");
 	    while(true)
 	    {
 	    	juge=s.nextLine();
@@ -85,12 +85,20 @@ public class helloworld {
 	    	
 	    	if(juge.equals("通过学号删除此学生信息"))
 	    	{
-	    		System.out.println("输入要删除学生的学号");
-	    		String id=s.nextLine();
-	    		list=studentfunction.DeletById(id, list);
+	    		list=studentfunction.DeletById(list);
 	    		System.out.println("操作成功！");
 	    	}
 	    	
+	    	if(juge.equals("按学号查询学生信息"))
+	    	{
+	    		Student a=new Student();
+	    		System.out.println("输入要查询学生的学号");
+	    		a=studentfunction.IdGetStudentInfo(list);
+	    		if(a.Class.equals("0")==true)
+	    		{
+	    			System.out.println("系统中没有此学生信息！");
+	    		}
+	    	}
 	    	if(juge.equals("退出系统"))
 	    	{
 	    		s.close();
@@ -104,7 +112,7 @@ public class helloworld {
 	    		break;
 	    	}
 	    	System.out.println("--------------------");
-		    System.out.println("##功能：\n#添加学生信息\n"+"#显示当前所有学生信息\n"+"#删除所有学生信息\n#通过学号删除此学生信息\n#通过学生名删除此学生信息\n");
+		    System.out.println("##功能：\n#添加学生信息\n"+"按学号查询学生信息\n"+"#显示当前所有学生信息\n"+"#删除所有学生信息\n#通过学号删除此学生信息\n#通过学生名删除此学生信息\n");
 	    }
 	}
 }
@@ -172,8 +180,12 @@ class StudentFunction
 		list.clear();
 		return list;
 	}
-	public List<Student> DeletById(String id2,List <Student> student)
+	public List<Student> DeletById(List <Student> student)
 	{
+		String id2="";
+		Scanner s=new Scanner(System.in);
+		System.out.println("输入要删除学生的学号");
+		id2=s.nextLine();
 		int flag=0;
 		for(int i=0;i<student.size();i++)
 		{
@@ -186,7 +198,16 @@ class StudentFunction
 		}
 		if(flag==0)
 		{
-			System.out.println("未找到此学号的学生");
+			try 
+			{
+			throw new IdNotFoundException();
+			}
+			catch(IdNotFoundException e)
+			{
+				e.PrintInfo();
+				StudentFunction studentfunction=new StudentFunction();
+				student=studentfunction.DeletById(student);
+			}
 		}
 		return student;
 	}
@@ -201,14 +222,32 @@ class StudentFunction
 			}
 		}
 	}
-	public Student IdGetStudentInfo(String id,List <Student> student)
+	public Student IdGetStudentInfo(List <Student> student)
 	{
+		Scanner s=new Scanner(System.in);
+		String id="";
+		id=s.nextLine();
 		Student a=new Student();
+		a.Class="0";
+		int flag=0;
 		for(int i=0;i<student.size();i++)
 		{
-			if(student.get(i).id==id) 
+			if(student.get(i).id.equals(id)) 
 			{
 				a=student.get(i);
+				System.out.println(a.id+"   "+a.name+"   "+a.Class+"   "+a.homeadd+"   "+a.home+"   "+a.grade+"   "+a.major);
+				flag++;
+			}
+		}
+		if(flag==0)
+		{
+			try 
+			{
+				throw new IdNotFoundException();
+			}
+			catch(IdNotFoundException e)
+			{
+				e.PrintInfo();
 			}
 		}
 		return a;
@@ -228,7 +267,7 @@ class StudentFunction
 	{
 		for(int i=0;i<student.size();i++)
 		{
-			if(student.get(i).id==id)
+			if(student.get(i).id.equals(id))
 			{
 			     student.get(i).id=newid;
 			}
@@ -238,7 +277,7 @@ class StudentFunction
 	{
 		for(int i=0;i<student.size();i++)
 		{
-			if(student.get(i).grade==grade)
+			if(student.get(i).grade.equals(grade))
 			{
 				student.get(i).grade=newgrade;
 			}
@@ -316,5 +355,18 @@ class FileFunction
 		br.close();
 		ipsr.close();
 		return list;
+	}
+}
+
+class IdNotFoundException extends Exception
+{
+	private static final long serialVersionUID = 1L;
+	IdNotFoundException()
+	{
+		super("未找到此学号的学生");
+	}
+	public void PrintInfo()
+	{
+		System.out.println("未找到此学号的学生");
 	}
 }
