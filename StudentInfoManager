@@ -40,7 +40,7 @@ public class helloworld {
 	    {
 	    	e.printStackTrace();
 	    }
-	    System.out.println("功能可输入：\n添加学生信息\n"+"按学号查询学生信息\n"+"显示当前所有学生信息\n"+"按学号修改学生全部信息\n删除所有学生信息\n通过学号删除此学生信息\n通过学生名删除此学生信息\n退出系统");
+	    System.out.println("功能可输入：\n添加学生信息\n"+"按学号查询学生信息\n"+"显示当前所有学生信息\n查看所有学生成绩排名\n"+"按学号修改学生全部信息\n删除所有学生信息\n通过学号删除此学生信息\n通过学生名删除此学生信息\n退出系统");
 	    while(true)
 	    {
 	    	juge=s.nextLine();
@@ -102,10 +102,36 @@ public class helloworld {
 	    	
 	    	if(juge.equals("按学号修改学生全部信息"))
 	    	{
-			System.out.println("输入要修改信息学生的学号");
-               		String id=s.nextLine();
+	    		System.out.println("输入要修改学生的学号");
+                String id=s.nextLine();
 	    		list=studentfunction.StudentAllinfoChange(id, list);
-	    		
+	    	}
+	    	if(juge.equals("查看所有学生成绩排名"))
+	    	{
+	    		List<Student> list2=new ArrayList<Student>();
+	    		for(int i=0;i<list.size();i++)
+	    		{
+	    			Student student=new Student();
+	    			student.id=list.get(i).id;
+	    			student.Class=list.get(i).Class;
+	    			student.grade=list.get(i).grade;
+	    			student.home=list.get(i).home;
+	    			student.homeadd=list.get(i).homeadd;
+	    			student.name=list.get(i).name;
+	    			student.major=list.get(i).major;
+	    			list2.add(student);
+	    		}
+	    		Collections.sort(list2);
+	    		for(int i=0;i<list.size();i++)
+    		    {
+    		    	System.out.print("第"+(i+1)+"名:   "+list2.get(i).id+"   ");
+    		    	System.out.print(list2.get(i).name+"   ");
+    		    	System.out.print(list2.get(i).Class+"   ");
+    		    	System.out.print(list2.get(i).homeadd+"   ");
+    		    	System.out.print(list2.get(i).home+"   ");
+    		    	System.out.print(list2.get(i).grade+"   ");
+    		    	System.out.print(list2.get(i).major+"\n");
+    		    }
 	    	}
 	    	if(juge.equals("退出系统"))
 	    	{
@@ -120,12 +146,12 @@ public class helloworld {
 	    		break;
 	    	}
 	    	System.out.println("--------------------");
-		    System.out.println("##功能：\n#添加学生信息\n"+"按学号查询学生信息\n"+"#显示当前所有学生信息\n"+"#按学号修改学生全部信息\n#删除所有学生信息\n#通过学号删除此学生信息\n#通过学生名删除此学生信息\n");
+		    System.out.println("##功能(输入#后的文字)：\n#添加学生信息\n"+"#按学号查询学生信息\n"+"#显示当前所有学生信息\n#查看所有学生成绩排名\n"+"#按学号修改学生全部信息\n#删除所有学生信息\n#通过学号删除此学生信息\n#通过学生名删除此学生信息\n");
 	    }
 	}
 }
 
-class Student
+class Student implements Comparable<Student>
 {
     String name;
     String id;
@@ -161,6 +187,14 @@ class Student
     public void ChangeGrade(String grade)
     {
     	this.grade=grade;
+    }
+    public int compareTo(Student student)
+    {
+    	return (Integer.parseInt(student.grade)-Integer.parseInt(this.grade));
+    }
+    public String toString()
+    {
+    	return(id+"   "+name+"   "+Class+"   "+homeadd+"   "+home+"   "+grade+"   "+major);
     }
 }
 
@@ -223,7 +257,7 @@ class StudentFunction
 	{
 		for(int i=0;i<student.size();i++)
 		{
-			if(student.get(i).name==name)
+			if(student.get(i).name.equals(name))
 			{
 				student.remove(i);
 				i--;
