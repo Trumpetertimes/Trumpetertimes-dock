@@ -40,7 +40,7 @@ public class helloworld {
 	    {
 	    	e.printStackTrace();
 	    }
-	    System.out.println("功能可输入：\n添加学生信息\n"+"按学号查询学生信息\n"+"显示当前所有学生信息\n查看所有学生成绩排名\n"+"按学号修改学生全部信息\n删除所有学生信息\n通过学号删除此学生信息\n通过学生名删除此学生信息\n退出系统");
+	    System.out.println("功能可输入：\n添加学生信息\n"+"按学号查询学生信息\n"+"显示当前所有学生信息\n查看所有学生成绩排名\n查看学习情况分段统计\n"+"按学号修改学生全部信息\n删除所有学生信息\n通过学号删除此学生信息\n通过学生名删除此学生信息\n退出系统");
 	    while(true)
 	    {
 	    	juge=s.nextLine();
@@ -74,6 +74,9 @@ public class helloworld {
 	    		{
 	    			e.printStackTrace();
 	    		}
+	    		System.out.println("--------------------");
+		    	System.out.println("按任意键继续...");
+		    	s.nextLine();
 	    	}
 	    	
 	    	if(juge.equals("删除所有学生信息"))
@@ -81,12 +84,18 @@ public class helloworld {
 	    		list=studentfunction.DeletAll(list);
 	    		file.delete();
 	    		System.out.println("所有学生信息已删除！");
+	    		System.out.println("--------------------");
+		    	System.out.println("按任意键继续...");
+		    	s.nextLine();
 	    	}
 	    	
 	    	if(juge.equals("通过学号删除此学生信息"))
 	    	{
 	    		list=studentfunction.DeletById(list);
 	    		System.out.println("操作成功！");
+	    		System.out.println("--------------------");
+		    	System.out.println("按任意键继续...");
+		    	s.nextLine();
 	    	}
 	    	
 	    	if(juge.equals("按学号查询学生信息"))
@@ -98,6 +107,9 @@ public class helloworld {
 	    		{
 	    			System.out.println("系统中没有此学生信息！");
 	    		}
+	    		System.out.println("--------------------");
+		    	System.out.println("按任意键继续...");
+		    	s.nextLine();
 	    	}
 	    	
 	    	if(juge.equals("按学号修改学生全部信息"))
@@ -105,7 +117,87 @@ public class helloworld {
 	    		System.out.println("输入要修改学生的学号");
                 String id=s.nextLine();
 	    		list=studentfunction.StudentAllinfoChange(id, list);
+	    		System.out.println("--------------------");
+		    	System.out.println("按任意键继续...");
+		    	s.nextLine();
 	    	}
+	    	
+	    	if(juge.equals("查看学习情况分段统计"))
+	    	{
+	    		
+	    		List<Student> list2=new ArrayList<Student>();
+	    		for(int i=0;i<list.size();i++)
+	    		{
+	    			Student student=new Student();
+	    			student.id=list.get(i).id;
+	    			student.Class=list.get(i).Class;
+	    			student.grade=list.get(i).grade;
+	    			student.home=list.get(i).home;
+	    			student.homeadd=list.get(i).homeadd;
+	    			student.name=list.get(i).name;
+	    			student.major=list.get(i).major;
+	    			list2.add(student);
+	    		}
+	    		Collections.sort(list2);
+	    		int section1=0;int section2=0;int section3=0;int section4=0;int section5=0;
+	    		for(int i=0;i<list2.size();i++)
+    		    {
+	    				if(Integer.parseInt(list2.get(i).grade)>=90)
+	    					section1++;
+	    				if(Integer.parseInt(list2.get(i).grade)>=80&&Integer.parseInt(list2.get(i).grade)<90)
+	    					section2++;
+	    				if(Integer.parseInt(list2.get(i).grade)>=70&&Integer.parseInt(list2.get(i).grade)<80)
+	    					section3++;
+	    				if(Integer.parseInt(list2.get(i).grade)>=60&&Integer.parseInt(list2.get(i).grade)<70)
+	    					section4++;
+	    				if(Integer.parseInt(list2.get(i).grade)<60)
+	    					section5++;
+    		    }
+	    		System.out.println("90-100分段： "+section1+"人");
+	    		if(section1==0)
+	    			System.out.println("无");
+	    		for(int i=0;i<section1;i++)
+	    		{
+	    			System.out.print("第"+(i+1)+"名:   ");
+    		    	studentfunction.PrintSingleStudentInfo(list2, i);
+	    		}
+	    		System.out.println("80-90分段： "+section2+"人");
+	    		if(section2==0)
+	    			System.out.println("无");
+	    		for(int i=section1;i<(section1+section2);i++)
+	    		{	
+	    			System.out.print("第"+(i+1-section1)+"名:   ");
+	    			studentfunction.PrintSingleStudentInfo(list2, i);
+	    		}
+	    		System.out.println("70-80分段： "+section3+"人");
+	    		if(section3==0)
+	    			System.out.println("无");
+	    		for(int i=section1+section2;i<(section1+section2+section3);i++)
+	    		{	
+	    			System.out.print("第"+(i+1-section1-section2)+"名:   ");
+	    			studentfunction.PrintSingleStudentInfo(list2, i);
+	    		}
+	    		System.out.println("60-70分段： "+section4+"人");
+	    		if(section4==0)
+	    			System.out.println("无");
+	    		for(int i=section1+section2+section3;i<(section1+section2+section3+section4);i++)
+	    		{	
+	    			System.out.print("第"+(i+1-section1-section2-section3)+"名:   ");
+	    			studentfunction.PrintSingleStudentInfo(list2, i);
+	    		}
+	    		System.out.println("0-60分段： "+section5+"人");
+	    		if(section5==0)
+	    			System.out.println("无");
+	    		for(int i=section1+section2+section3+section4;i<(section5+section1+section2+section3+section4);i++)
+	    		{
+	    			System.out.print("第"+(i+1-section1-section2-section3-section4)+"名:   ");
+	    			studentfunction.PrintSingleStudentInfo(list2, i);
+	    		}
+	    		System.out.println("--------------------");
+		    	System.out.println("按任意键继续...");
+		    	s.nextLine();
+	    	}
+	    	
 	    	if(juge.equals("查看所有学生成绩排名"))
 	    	{
 	    		List<Student> list2=new ArrayList<Student>();
@@ -122,17 +214,16 @@ public class helloworld {
 	    			list2.add(student);
 	    		}
 	    		Collections.sort(list2);
-	    		for(int i=0;i<list.size();i++)
+	    		for(int i=0;i<list2.size();i++)
     		    {
-    		    	System.out.print("第"+(i+1)+"名:   "+list2.get(i).id+"   ");
-    		    	System.out.print(list2.get(i).name+"   ");
-    		    	System.out.print(list2.get(i).Class+"   ");
-    		    	System.out.print(list2.get(i).homeadd+"   ");
-    		    	System.out.print(list2.get(i).home+"   ");
-    		    	System.out.print(list2.get(i).grade+"   ");
-    		    	System.out.print(list2.get(i).major+"\n");
+    		    	System.out.print("第"+(i+1)+"名:   ");
+    		    	studentfunction.PrintSingleStudentInfo(list2, i);
     		    }
+	    		System.out.println("--------------------");
+		    	System.out.println("按任意键继续...");
+		    	s.nextLine();
 	    	}
+	    	
 	    	if(juge.equals("退出系统"))
 	    	{
 	    		s.close();
@@ -145,8 +236,8 @@ public class helloworld {
 	    		}
 	    		break;
 	    	}
-	    	System.out.println("--------------------");
-		    System.out.println("##功能(输入#后的文字)：\n#添加学生信息\n"+"#按学号查询学生信息\n"+"#显示当前所有学生信息\n#查看所有学生成绩排名\n"+"#按学号修改学生全部信息\n#删除所有学生信息\n#通过学号删除此学生信息\n#通过学生名删除此学生信息\n");
+	    	
+		    System.out.println("##功能(输入#后的文字)：\n#添加学生信息\n"+"#按学号查询学生信息\n"+"#显示当前所有学生信息\n#查看所有学生成绩排名\n#查看学习情况分段统计\n"+"#按学号修改学生全部信息\n#删除所有学生信息\n#通过学号删除此学生信息\n#通过学生名删除此学生信息\n");
 	    }
 	}
 }
@@ -373,6 +464,7 @@ class StudentFunction
 		System.out.println("请输入学生信息");
 		Scanner s=new Scanner(System.in);
 		Student a=new Student();
+		String juge="";
 		System.out.println("学号");
 		a.id=s.nextLine();
 		System.out.println("姓名");
@@ -388,9 +480,32 @@ class StudentFunction
 		System.out.println("专业");
 		a.major=s.nextLine();
 		list.add(a);
+		for(;;)
+		{
+		System.out.println("继续添加学生信息？  Y/N");
+		juge=s.nextLine();
+		if(juge.equals("Y"))
+		{
+			list=StudentAdd(list);
+		}
+		if(juge.equals("N"))
+		{
+			System.out.println("操作成功");
+			break;
+		}
+		}
 		return list;
 	}
-	
+	public void PrintSingleStudentInfo(List<Student> list2,int i)
+	{
+		System.out.print(list2.get(i).id+"   ");
+		System.out.print(list2.get(i).name+"   ");
+    	System.out.print(list2.get(i).Class+"   ");
+    	System.out.print(list2.get(i).homeadd+"   ");
+    	System.out.print(list2.get(i).home+"   ");
+    	System.out.print(list2.get(i).grade+"   ");
+    	System.out.print(list2.get(i).major+"\n");
+	}
 }
 
 class FileFunction
